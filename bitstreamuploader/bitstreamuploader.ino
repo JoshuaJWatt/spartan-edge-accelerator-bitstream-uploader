@@ -59,10 +59,14 @@ void setup() {
   Serial.print("AP IP address: ");
   Serial.println(myIP);
 //  server.begin();
-
-  SPIFFS.begin();
   
   Serial.println("Server started");
+
+  SD.begin();
+//  if(!SD.begin()){
+//    Serial.println("Initialization Failed");
+//    return;
+//  }
 
   // check if the .html file exist or not
   const char *path = "/index.html";
