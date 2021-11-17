@@ -16,7 +16,6 @@
 
 // Not all of these are necessary, I'll go through and clean up once everything is working
 #include <Arduino.h>
-#include <fstream>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h>
@@ -27,9 +26,14 @@
 #include "SPI.h"
 #include <ESPAsyncWebServer.h>
 #include <AsyncTCP.h>
-#include "SPIFFS.h"
+#include "SD_MMC.h"
 
 #define FORMAT_SPIFFS_IF_FAILED true
+
+extern "C" {
+  //external header for the pulling up of SD pins at the initialization
+  #include "driver/sdmmc_host.h"
+}
 
 // initialize the spartan_edge_esp32_boot library
 spartan_edge_esp32_boot esp32Cla;
@@ -62,22 +66,12 @@ void setup() {
   
   Serial.println("Server started");
 
-  SD.begin();
-//  if(!SD.begin()){
-//    Serial.println("Initialization Failed");
-//    return;
-//  }
-
-  // check if the .html file exist or not
-  const char *path = "/index.html";
+  //PULL UP of SD card pins <--- preventing mounting failure due to floating state
+  sdmmc_host_pullup_en(1, 4); //Slot: 1 and Bit mode: 4
   
-//  File h = SPIFFS.open(path);
-//  if (!h) {
-//    Serial.print("html file ");
-//    Serial.print(path);
-//    Serial.println(" does not exist");
-//    return;
-//  }
+  if (!SD_MMC.begin()) {
+    Serial.println("Card Mount Failed,please reboot the board");
+  }
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SD, "/index.html", "text/html");
@@ -89,57 +83,6 @@ void setup() {
   Serial.println("page up");
 }
 
-
-
 void loop() {
-//  WiFiClient client = server.available();   // listen for incoming clients
-//
-//  if (client) {                             // if you get a client,
-//    Serial.println("New Client.");           // print a message out the serial port
-//    String currentLine = "";                // make a String to hold incoming data from the client
-//    while (client.connected()) {            // loop while the client's connected
-//      if (client.available()) {             // if there's bytes to read from the client,
-//        char c = client.read();             // read a byte, then
-//        Serial.write(c);                    // print it out the serial monitor
-//        if (c == '\n') {                    // if the byte is a newline character
-//
-//          // if the current line is blank, you have two newline characters in a row.
-//          // that's the end of the client HTTP request, so send a response:
-//          if (currentLine.length() == 0) {
-//            // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
-//            // and a content-type so the client knows what's coming, then a blank line:
-//            client.println("HTTP/1.1 200 OK");
-//            client.println("Content-type:text/html");
-//            
-//            client.println();
-//
-//            // the content of the HTTP response follows the header:
-////            client.print("Click <a href=\"/H\">here</a> to turn ON the LED.<br>");
-////            client.print("Click <a href=\"/L\">here</a> to turn OFF the LED.<br>");
-//            client.print(html);
-//
-//            // The HTTP response ends with another blank line:
-//            client.println();
-//            // break out of the while loop:
-//            break;
-//          } else {    // if you got a newline, then clear currentLine:
-//            currentLine = "";
-//          }
-//        } else if (c != '\r') {  // if you got anything else but a carriage return character,
-//          currentLine += c;      // add it to the end of the currentLine
-//        }
-//
-//        // Check to see if the client request was "GET /H" or "GET /L":
-//        if (currentLine.endsWith("GET /H")) {
-//          digitalWrite(LED_BUILTIN, HIGH);               // GET /H turns the LED on
-//        }
-//        if (currentLine.endsWith("GET /L")) {
-//          digitalWrite(LED_BUILTIN, LOW);                // GET /L turns the LED off
-//        }
-//      }
-//    }
-//    // close the connection:
-//    client.stop();
-//    Serial.println("Client Disconnected.");
-//  }
+  
 }
