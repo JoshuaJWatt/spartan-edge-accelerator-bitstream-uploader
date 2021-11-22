@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+	<title>Bitstream Input</title>
+</head>
+<body>
+	
+	<div><a href="index.html">Home</a></div>
+
+	<div>
+		
+		<!-- Code for an upload here -->
+		<!-- We may need to do some file handling here. Probably do it in the arduino sketch thing though. -->
+		<!-- <button type="button">Choose File</button> -->
+		<!-- <button type="submit" formmethod="post">Upload</button>  --> 
+	</div>
+
+	<div>
+		Upload .bit file:
+		<form action="bitstreamupload.php" method="post" enctype="multipart/form-data">
+		<input type="file" id="thebitstream" name="bitstream">
+		<input type="submit" name="submit">
+	  </form>
+	</div>
+
+
+	<button onclick="history.back()">Return</button>
+
+</body>
+</html>
