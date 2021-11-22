@@ -62,7 +62,6 @@ void setup() {
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
-//  server.begin();
   
   Serial.println("Server started");
 
@@ -74,10 +73,10 @@ void setup() {
   }
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SD, "/index.html", "text/html");
+    request->send(SD_MMC, "/index.html", "text/html");
   });
 
-  server.serveStatic("/", SD, "/");
+  server.serveStatic("/", SD_MMC, "/");
   server.begin();
    
   Serial.println("page up");
